@@ -1,0 +1,21 @@
+{
+    "centos8_iso_url": "/mnt/ISO/CentOS-8.2.2004-x86_64-minimal.iso",
+    "centos8_iso_checksum": "47ab14778c823acae2ee6d365d76a9aed3f95bb8d0add23a06536b58bb5293c0",
+
+    "oracle8_iso_url": "C:/Users/yonix_nexro/ISO/OL8_x86_64-boot.iso",
+    "oracle8_iso_checksum": "b92b49553690420053b32dff54c7cce89463eb98c35a1b57706b7408a2ec24bc",
+    "oracle8_iso_type": "boot",
+
+    "rocky8_iso_url": "/mnt/ISO/Rocky-8.4-x86_64-minimal.iso",
+    "rocky8_iso_checksum": "0de5f12eba93e00fefc06cdb0aa4389a0972a4212977362ea18bde46a1a1aa4f",
+    "rocky8_iso_type": "lvm",
+
+    "alma8_iso_url": "C:/Users/tonix_nexro/ISO/AlmaLinux-8-x86_64-boot.iso",
+    "alma8_iso_checksum": "76e8f56892e6d90706b142868eec51b6b8c015ec3792f8d9e0730da93a2d1162",
+
+    "headless": "false",
+
+    "vmware_compatibility": "11",
+
+    "disk_size": "20480"
+}

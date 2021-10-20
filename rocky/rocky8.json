@@ -1,0 +1,182 @@
+{
+  "variables": {
+
+    "vm_name":"Rocky8",
+    "vm_description":"Rocky8",
+
+    "disk_size": "16384",
+    "memory": "4096",
+
+    "ssh_user": "vagrant",
+    "ssh_password": "V@grant1",
+
+    "shutdown_command": "sudo shutdown",
+
+    "master_dir": "./rocky",
+
+    "vmware_compatibility": "16",
+
+    "headless": "true",
+
+    "rocky8_iso_type": "boot",
+
+    "boot_wait": "10s",
+    "boot_command": "<tab><bs><bs><bs><bs><bs>text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks-{{user `rocky8_iso_type`}}.cfg<enter><wait>"
+  },
+
+
+
+  "builders": [
+
+
+    {
+      "vm_name": "{{user `vm_name`}}",
+
+
+      "type": "vmware-iso",
+      "output_directory": "output-vmware/{{user `vm_name`}}",
+      "guest_os_type": "oraclelinux8-64",
+      "version": "{{user `vmware_compatibility`}}",
+
+
+      "iso_url": "{{user `rocky8_iso_url`}}",
+      "iso_checksum": "{{user `rocky8_iso_checksum`}}",
+
+      "boot_command": "{{user `boot_command`}}",
+
+      "boot_wait": "{{user `boot_wait`}}",
+      "shutdown_timeout": "2m",
+      "shutdown_command": "{{user `shutdown_command`}}",
+
+      "headless": "{{user `headless`}}",
+
+      "communicator": "ssh",
+      "ssh_username": "{{user `ssh_user`}}",
+      "ssh_password": "{{user `ssh_password`}}",
+      "ssh_timeout": "30m",
+
+
+      "cpus": 2,
+      "cores": 2,
+      "memory": "{{user `memory`}}",
+      "disk_size": "{{user `disk_size`}}",
+        
+      
+      "http_directory": "{{user `master_dir`}}/http"
+    },
+
+
+    {
+      "vm_name": "{{user `vm_name`}}",
+
+
+      "type": "virtualbox-iso",
+      "output_directory": "output-virtualbox/{{user `vm_name`}}",
+      "guest_os_type": "Oracle_64",
+      "guest_additions_mode": "attach",
+
+
+      "iso_url": "{{user `rocky8_iso_url`}}",
+      "iso_checksum": "{{user `rocky8_iso_checksum`}}",
+
+      "boot_command": "{{user `boot_command`}}",
+
+      "boot_wait": "{{user `boot_wait`}}",
+      "shutdown_timeout": "2m",
+      "shutdown_command": "{{user `shutdown_command`}}",
+
+      "headless": "{{user `headless`}}",
+
+      "communicator": "ssh",
+      "ssh_username": "{{user `ssh_user`}}",
+      "ssh_password": "{{user `ssh_password`}}",
+      "ssh_wait_timeout": "30m",
+
+
+      "cpus": 2,
+      "memory": "{{user `memory`}}",
+      "disk_size": "{{user `disk_size`}}",
+        
+      
+      "http_directory": "{{user `master_dir`}}/http"
+    },
+
+
+    {
+      "vm_name": "{{user `vm_name`}}",
+
+
+      "type": "qemu",
+      "output_directory": "output-qemu/{{user `vm_name`}}",
+
+
+      "iso_url": "{{user `rocky8_iso_url`}}",
+      "iso_checksum": "{{user `rocky8_iso_checksum`}}",
+      
+      "boot_command": "{{user `boot_command`}}",
+
+      "shutdown_command": "{{user `shutdown_command`}}",
+      "shutdown_timeout": "2m",
+
+      "headless": "{{user `headless`}}",
+
+      "communicator": "ssh",
+      "ssh_username": "{{user `ssh_user`}}",
+      "ssh_password": "{{user `ssh_password`}}",
+      "ssh_timeout": "30m",
+
+      "memory": "{{user `memory`}}",
+      "disk_size": "{{user `disk_size`}}",
+      "format": "qcow2",
+      "accelerator": "kvm",
+      "net_device": "virtio-net",
+      "disk_interface": "virtio",
+      "boot_wait": "{{user `boot_wait`}}",
+
+      "cpus": 4,
+        
+      
+      "http_directory": "{{user `master_dir`}}/http",
+
+      "qemuargs": [
+        [ "-drive", "file=output-qemu/{{user `vm_name`}}/{{ .Name }},if=virtio,cache=writeback,discard=ignore,format=qcow2,index=1" ]
+      ]
+    }
+    
+  ],
+            
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "sudo dnf install -y python3"
+      ],
+      "execute_command": "sh -c {{ .Path }}"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "sudo dnf install -y open-vm-tools"
+      ],
+      "only": ["vmware-iso"],
+      "execute_command": "sh -c {{ .Path }}"
+    },
+    
+    {
+      "type": "shell",
+      "inline": [
+        "sudo dnf install -y qemu-guest-agent"
+      ],
+      "only": ["qemu"],
+      "execute_command": "sh -c {{ .Path }}"
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "shell-local",
+      "execute_command": "mv output-qemu/{{user `vm_name`}}/{{user `vm_name`}} output-qemu/{{user `vm_name`}}/{{user `vm_name`}}.qcow2",
+      "only": ["qemu"],
+      "inline": "mv output-qemu/{{user `vm_name`}}/{{user `vm_name`}} output-qemu/{{user `vm_name`}}/{{user `vm_name`}}.qcow2"
+    }
+  ]
+}
