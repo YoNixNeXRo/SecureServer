@@ -25,6 +25,8 @@ When its done the vm will delete itself and you can now import the .ovf machine 
 
 default ssh user is vagrant and password V@grant1
 
+> Big thanks to AmaelFr for this part as it is not mine https://github.com/amaelFr/packer_template 
+
 <br>
 
 ## 2nd Step
