@@ -1,5 +1,5 @@
 # SecureServer
-Script for install and post install redhate based server
+Script for install and post install redhate based server, not finish yet
 <br>
 
 ## 1st Step
