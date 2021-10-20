@@ -131,19 +131,19 @@ password_expiration(){
     cat >> /etc/login.defs << EOF
 #change encrypt method
 SHA_CRYPT_MIN_ROUNDS 99999
-#nb de secondes avoir de pouvoir refaire une tentive
+
 FAIL_DELAY 5
-#log les fail login
+
 FAILLOG_ENAB yes
-#log les connexion reussies
+
 LOG_OK_LOGINS yes
-#afficher les users fail avecun user inconnu
+
 LOG_UNKFAIL_ENAB yes
-#tentative de connexion en cas de mauvais mdp
+
 LOGIN_RETRIES 3
-#avertir d'un maucais mdp
+
 PASS_ALWAYS_WARN yes
-#activer des check lors du changement de mdp
+
 OBSCURE_CHECKS_ENAB yes
 
 EOF
