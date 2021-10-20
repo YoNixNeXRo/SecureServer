@@ -35,3 +35,7 @@ import the post installation script on your vm and run it.
 `scp /home/yonix_nexro/SecureServer/post_install_script_rockylinux.sh root@192.168.0.1:/root/`
 
 make it executable `chmod +x script` and then run it `./post_installation_script.sh`
+
+tips before running it : 
+- line 211 put your ssh key it you want to ssh as root. Please only consider using ed25519 key.
+- to have an idea of your server security run `lynis audit system` score should never be under 80. This script objectif is between 85 and 90. Now its currently 80.
