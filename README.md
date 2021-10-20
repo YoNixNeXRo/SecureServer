@@ -14,9 +14,10 @@ Copy type.vars.json into vars.json and edit file with iso path and make sure thi
 
 
 Linux : `packer build --only=virtualbox-iso --var-file="vars.json"  rocky/rocky8.json `
+
 Windows : `.\packer.exe build -only=vmwareiso -var-file="var.json" rocky/rocky8.json`
 
-(you can change virtualbox by vmware)
+(change virtualizer with the one you have)
 
 Now your vm is building up, default ssh user is vagrant and password V@grant1
 
