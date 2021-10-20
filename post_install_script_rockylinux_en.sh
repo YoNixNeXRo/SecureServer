@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Name   :   YoNix_NeXRo
+# Name        :   YoNix_NeXRo
 #
-# Version    :   v2.3
-# Changelog : same as v2.2 but PermitRootLogin is without-password instead of NO
-# State : still on going
-
+# Version     :   v3
+# Changelog   : more security features
+# State       : still on going
+# Lynis score : 83
 
 requirements(){
 
@@ -20,7 +20,7 @@ update_install_remove(){
     yum remove -y iwl* bluez* telnet
     yum install epel-release -y
     yum config-manager --set-enabled powertools
-    yum install vim mlocate tmux zip dstat iotop git psmisc tree mc curl  openssl lynis pigz glibc-all-langpacks rsync htop glances net-tools bash-completion lynx figlet -y
+    yum install vim mlocate tmux zip dstat iotop git psmisc tree mc curl  openssl lynis pigz glibc-all-langpacks rsync htop glances net-tools bash-completion lynx figlet rkhunter -y
     localectl set-locale LANG=fr_FR.utf8
     localectl set-keymap fr
     localectl set-x11-keymap fr
@@ -123,7 +123,7 @@ password_expiration(){
     sed -i '/PASS_MAX_DAYS/s/99999/180/' /etc/login.defs
     sed -i '/PASS_MIN_LEN/s/5/12/' /etc/login.defs
     sed -i '/PASS_WARN_AGE/s/7/12/' /etc/login.defs
-    sed -i '/PASS_MIN_DAYS/s/0/30/' /etc/login.defs
+    sed -i '/PASS_MIN_DAYS/s/0/1/' /etc/login.defs
     sed -i '/UMASK/s/022/0077/' /etc/login.defs
     sed -i '/umask/s/002/0077/' /etc/profile
     sed -i '/umask/s/022/0077/' /etc/profile
@@ -229,19 +229,10 @@ ssh_key_creation(){
 
 fstab_modification(){
     
-    #uid_swap=`blkid /dev/mapper/VG--ROOT-swap | cut -d" " -f2`
-    #uid_root=`blkid /dev/mapper/VG--ROOT-root | cut -d" " -f2`
-    #pour le prof mettre 3
-    #uid_swap=`blkid /dev/mapper/VG--ROOT-swap | cut -d" " -f3`
-    #uid_root=`blkid /dev/mapper/VG--ROOT-root | cut -d" " -f3`
     
-
-    #sed -i "s/\/dev\/mapper\/VG--ROOT-root/$uid_root/g" /etc/fstab
-    #sed -i "s/\/dev\/mapper\/VG--ROOT-swap/$uid_swap/g" /etc/fstab
     lv=`ls /dev/mapper | grep VG`
     cp -vip /etc/fstab /etc/fstab.bak 
     for i in $lv; do 
-        # -f3 pour le systeme du prof
         uid=`blkid /dev/mapper/$i -s UUID -o value`
         sed -ie "s/\/dev\/mapper\/$i/UUID=$uid/g" /etc/fstab
     done
@@ -262,6 +253,7 @@ install tipc /bin/true
 install rds /bin/true
 install sctp /bin/true
 install dccp /bin/true
+install firewire-core /bin/true
 EOF
 
     echo 'install usb-storage /bin/true' >> disable-usb-storage.conf
@@ -293,8 +285,38 @@ ssh_configuration_hardening(){
     sed -i 's/#AllowAgentForwarding[[:blank:]]yes/AllowAgentForwarding NO/g' /etc/ssh/sshd_config
     sed -i 's/#TCPKeepAlive[[:blank:]]yes/TCPKeepAlive NO/g' /etc/ssh/sshd_config
     sed -i 's/#Port[[:blank:]]22/Port 2222/' /etc/ssh/sshd_config
+    sed -i 's/#UseDNS[[:blank:]]yes/UseDNS NO/' /etc/ssh/sshd_config
     
     
+    cat >> /etc/security/limits.conf << EOF
+* hard core 0
+* soft core 0
+EOF
+	
+	cat >> /etc/sysctl.d/9999-disable-core-dump.conf << EOF
+fs.suid_dumpable=0
+kernel.core_pattern=|/bin/false
+EOF
+
+	sysctl -p /etc/sysctl.d/9999-disable-core-dump.conf
+    
+    sysctl -a > /tmp/sysctl-defaults.conf
+    
+    cat >> /etc/sysctl.d/80-lynis.conf << EOF
+kernel.kptr_restrict = 2
+kernel.sysrq = 0
+net.ipv4.conf.all.accept_redirects = 0
+net.ipv4.conf.all.log_martians = 1
+net.ipv4.conf.all.send_redirects = 0
+net.ipv4.conf.default.accept_redirects = 0
+net.ipv4.conf.default.log_martians = 1
+#net.ipv4.tcp_timestamps = 0
+net.ipv6.conf.all.accept_redirects = 0
+net.ipv6.conf.default.accept_redirects = 0    
+EOF
+sysctl --system
+rkunter --update
+rkhunter --propupd
     
 }
 clean_hostname(){
@@ -303,6 +325,8 @@ clean_hostname(){
     echo "$hostname$domain" > /etc/hostname
     ip=`ip -o -4 addr list | grep 2: | awk '{print $4}' | cut -d/ -f1`
     echo "$ip    $hostname    $hostname$domain"
+    
+    echo "$ip   $hostname" >> /etc/hosts
 }
 
 change_time(){
@@ -350,8 +374,10 @@ main(){
     clean_hostname
     change_time
     set_static_ip
+    updatedb
     reboot
 }
 
 main
+
 
