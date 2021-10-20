@@ -10,7 +10,7 @@ install packer on your main (works with windows or linux). Linux go to [packer](
 
 download redhat based os (for exemple rockylinux minimal  : https://rockylinux.org/download/).
 
-Edit vars.json with iso path and make sure this is the right checksum. (as you can see you can have multiple iso and it works with windows and linux)
+Edit vars.json with iso path and make sure this is the right checksum. (as you can see you can have multiple iso and it works with windows and linux), you can also edit rocky8.json to modify disk size.
 
 
 Linux : `packer build --only=virtualbox-iso --var-file="vars.json"  rocky/rocky8.json `
