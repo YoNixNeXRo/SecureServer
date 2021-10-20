@@ -19,7 +19,11 @@ Windows : `.\packer.exe build -only=vmwareiso -var-file="var.json" rocky/rocky8.
 
 (change virtualizer with the one you have)
 
-Now your vm is building up, default ssh user is vagrant and password V@grant1
+Now your vm is building up.
+
+When its done the vm will delete itself and you can now import the .ovf machine file. In your virtualizer : import /path/to/SecureServer/output-virtualizer/Rocky8.ovf
+
+default ssh user is vagrant and password V@grant1
 
 <br>
 
