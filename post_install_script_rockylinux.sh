@@ -320,8 +320,8 @@ rkhunter --propupd
     
 }
 clean_hostname(){
-    hostname="SERVEUR.PXE"
-    domain=".esgi.local"
+    hostname="MY.HOSTNAME"
+    domain=".me.local"
     echo "$hostname$domain" > /etc/hostname
     ip=`ip -o -4 addr list | grep 2: | awk '{print $4}' | cut -d/ -f1`
     echo "$ip    $hostname    $hostname$domain"
