@@ -40,4 +40,4 @@ make it executable `chmod +x script` and then run it `./post_installation_script
 
 tips before running it : 
 - line 211 put your ssh key it you want to ssh as root. Please only consider using ed25519 key.
-- to have an idea of your server security run `lynis audit system` score should never be under 83. This script objectif is between 85 and 90. Now its currently 80.
+- to have an idea of your server security run `lynis audit system` score should never be under 83. This script objectif is between 85 and 90. Now its currently 83.
